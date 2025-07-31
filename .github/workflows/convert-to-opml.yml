@@ -1,0 +1,48 @@
+name: Convert Wechat2RSS to OPML
+
+on:
+  schedule:
+    # 每天 UTC 时间 06:00 (北京时间 14:00) 运行
+    - cron: '0 6 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 lxml
+        
+    - name: Download source markdown file
+      run: |
+        curl -o all.md "https://raw.githubusercontent.com/ttttmr/Wechat2RSS/refs/heads/master/list/all.md"
+        
+    - name: Validate source content
+      run: |
+        python scripts/validate_source.py all.md
+        
+    - name: Convert to OPML
+      run: |
+        python scripts/convert_to_opml.py all.md wechat2rss.opml
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add wechat2rss.opml
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update OPML file - $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
+        fi
