@@ -19,7 +19,7 @@ python3 scripts/convert_to_opml.py all.md wechat2rss.opml
 
 ### Key notes
 
-- **No external pip packages are needed.** The CI workflow installs `requests`, `beautifulsoup4`, `lxml` but neither script imports them — all code uses only stdlib modules (`xml.etree.ElementTree`, `re`, `sys`, `os`).
+- **No external pip packages are needed.** All code uses only stdlib modules (`xml.etree.ElementTree`, `re`, `sys`, `os`).
 - **No lint/test framework exists in this repo.** You can syntax-check the scripts with `python3 -m py_compile scripts/convert_to_opml.py scripts/validate_source.py`.
 - The `all.md` source file is not committed; it is downloaded at runtime from `ttttmr/Wechat2RSS`.
 - The output `wechat2rss.opml` is the committed artifact (~408 lines, ~393 RSS feeds across 4 categories).
